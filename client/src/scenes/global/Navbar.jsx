@@ -1,11 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Badge, Box, IconButton } from "@mui/material";
 import {
-  PersonOutline,
-  ShoppingBagOutlined,
-  MenuOutlined,
-  SearchOutlined,
+  AdminPanelSettingsOutlined,
+  ShoppingBasketOutlined,
+  BarChartOutlined,
+  TableRowsOutlined,
+  PersonOutline
 } from "@mui/icons-material";
+
 import { useNavigate } from "react-router-dom";
 import { shades } from "../../theme";
 import { setIsCartOpen } from '../../state';
@@ -48,12 +50,7 @@ function Navbar() {
           columnGap="20px"
           zIndex="2"
         >
-          <IconButton sx={{ color: "black" }}>
-            <SearchOutlined />
-          </IconButton>
-          <IconButton sx={{ color: "black" }}>
-            <PersonOutline />
-          </IconButton>
+         
           <Badge
             badgeContent={cart.length}
             color="secondary"
@@ -72,11 +69,17 @@ function Navbar() {
               onClick={() => dispatch(setIsCartOpen({}))}
               sx={{ color: "black" }}
             >
-              <ShoppingBagOutlined />
+              <ShoppingBasketOutlined />
             </IconButton>
           </Badge>
-          <IconButton sx={{ color: "black" }}>
-            <MenuOutlined />
+          <IconButton sx={{ color: "black" }} onClick={() => navigate("/overview")}>
+            <TableRowsOutlined />
+          </IconButton>
+          <IconButton sx={{ color: "black" }} onClick={() => navigate("/")}>
+            <BarChartOutlined />
+          </IconButton>
+          <IconButton sx={{ color: "black" }} onClick={() => navigate("/admin")}>
+            <AdminPanelSettingsOutlined />
           </IconButton>
         </Box>
       </Box>

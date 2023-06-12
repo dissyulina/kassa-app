@@ -13,6 +13,8 @@ import {
   setIsCartOpen,
 } from "../../state";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "../../hooks/useSnackbar";
+import { Alert, AlertColor, Snackbar } from '@mui/material';
 
 const FlexBox = styled(Box)`
   display: flex;
@@ -25,6 +27,7 @@ const CartMenu = () => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
   const isCartOpen = useSelector((state) => state.cart.isCartOpen);
+  const { AlertMessage, isVisible, getAlertMessage } = useSnackbar();
 
   const totalPrice = cart.reduce((total, item) => {
     return total + item.count * item.attributes.price;
@@ -33,28 +36,52 @@ const CartMenu = () => {
   console.log("cart", cart)
 
   async function saveOrders(values) {
-    const requestBody = {
-      //time: new Date(),
-      data: cart.map((product) => ({
-        id: product.id,
-        name: product.attributes.name,
-        count: product.count,
-        price: product.attributes.price,
-      })),
-    };
+    // const requestBody = {
+    //   //time: new Date(),
+    //   data: cart.map((product) => ({
+    //     id: product.id,
+    //     name: product.attributes.name,
+    //     count: product.count,
+    //     price: product.attributes.price,
+    //   })),
+    // };
+
+    const requestBody = cart.map((product) => ({
+      id: product.id,
+      name: product.attributes.name,
+      count: product.count,
+      price: product.attributes.price,
+    }))
+  
+    const payload = { data: {products: requestBody}}
+    
     console.log("requestBody", requestBody)
 
     const response = await fetch("http://localhost:1337/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(payload),
+      //body: JSON.stringify({ data: [{ id: 3, name: 'Siomay', count: 1, price: 10 }, { id: 2, name: 'Bubur Ayam', count: 1, price: 5.5 }] }),
     });
+    const session = await response.json();
+    console.log(session)
     if (response) {
-      const session = await response.json();
-      console.log("response", response)
-      console.log("session", session)
+      if (response.status === 200) {
+        console.log("SUCCESS");
+        getAlertMessage('success', "Data is saved.")
+      }
     }
+    if (session.error) {
+      console.log(session);
+      getAlertMessage('warning', session.error.name)
+    }
+    setTimeout(() => {
+      dispatch(setIsCartOpen({}));
+      dispatch(emptyCart({}));
+    }, 1500)
   }
+
+  console.log(isVisible)
 
   return (
     <Box
@@ -151,16 +178,14 @@ const CartMenu = () => {
               padding: "20px 40px",
               m: "20px 0",
             }}
-            onClick={() => {
-              navigate("/");
-              dispatch(setIsCartOpen({}));
-              dispatch(emptyCart({}));
+            onClick={() => {     
               saveOrders();
             }}
           >
             Save
           </Button>
         </Box>
+        {isVisible === true ? <AlertMessage /> : ''}
       </Box>
     </Box>
   </Box>

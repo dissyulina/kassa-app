@@ -1,54 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
+import { Box, Typography } from '@mui/material';
+import { DataGrid, GridToolbar, GridToolbarExport, GridToolbarContainer } from '@mui/x-data-grid';
 import { Container } from '@mui/material';
 
-const columns = [
-  { field: 'id', headerName: 'ID', width: 90 },
-  {
-    field: 'firstName',
-    headerName: 'First name',
-    width: 150,
-    editable: true,
-  },
-  {
-    field: 'lastName',
-    headerName: 'Last name',
-    width: 150,
-    editable: true,
-  },
-  {
-    field: 'age',
-    headerName: 'Age',
-    type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  },
-];
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport />
+    </GridToolbarContainer>
+  )
+}
 
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+const columns = [
+  {
+    field: 'time',
+    headerName: 'Created At',
+    valueFormatter: params => new Date(params?.value).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: false}),
+    flex: 1,
+  },
+  {
+    field: 'order',
+    headerName: 'Orders',
+    flex: 6,
+  },
 ];
 
 export default function DataGridDemo() {
   const [data, setData] = useState(null);
+  const [rows, setRows] = useState([]);
 
   useEffect(() => {
     getData();
@@ -60,26 +39,52 @@ export default function DataGridDemo() {
       { method: "GET" }
     );
     const ordersJson = await orders.json();
+    console.log("ordersJson", ordersJson)
+
+    let dataForTable = []
+    ordersJson.data.map(x => {
+      dataForTable.push({
+        id: x.id,
+        time: x.attributes.createdAt,
+        order: x.attributes.products.map(obj => `${obj.name}: ${obj.count}`).join(', '),
+      })
+    });
+    setRows(dataForTable)
+
+    let detailProductData = []
+    ordersJson.data.map(x => x.attributes.products.map(y => {
+      detailProductData.push({
+        id: x.id,
+        time: x.attributes.createdAt,
+        [y.name]: y.count,
+      })
+    }))
+    
+    console.log("data", dataForTable)
     setData(ordersJson);
   }
-  console.log(data)
+  //console.log(data)
 
   return (
     <Container>
-    <Box sx={{ height: 400, width: '100%', marginTop: '5rem' }}>
+    <Box sx={{ height: '80vh', width: '100%', marginTop: '5rem' }}>
+      <Typography variant="h3" textAlign="center" mb="24px">
+        <b>All Orders</b>
+      </Typography>
       <DataGrid
         rows={rows}
         columns={columns}
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 5,
+              pageSize: 25,
             },
           },
         }}
-        pageSizeOptions={[5]}
-        checkboxSelection
+        pageSizeOptions={[25]}
+        slots={{toolbar: CustomToolbar}}
         disableRowSelectionOnClick
+        rowHeight={40}
       />
     </Box>
     </Container>

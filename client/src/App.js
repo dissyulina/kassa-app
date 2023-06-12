@@ -5,6 +5,7 @@ import Navbar from './scenes/global/Navbar';
 import CartMenu from './scenes/global/CartMenu';
 import Footer from './scenes/global/Footer';
 import Table from './scenes/overview/Table';
+import Admin from './scenes/admin/Admin';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -23,6 +24,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/overview" element={<Table />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
         <CartMenu/>
         {/* <Footer /> */}

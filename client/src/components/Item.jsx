@@ -10,19 +10,19 @@ import { useNavigate } from "react-router-dom";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DialogEditPrice from './EditPrice';
 
-const Item = ({ item, width }) => {
+const Item = ({ item, handleEdit, width }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { palette: { neutral }} = useTheme();
+  const [anchorEl, setAnchorEl] = useState(null);
   const [count, setCount] = useState(1);
-  const {
-    palette: { neutral },
-  } = useTheme();
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const open = Boolean(anchorEl);
+
   const { category, price, name, image} = item.attributes;
   const { id } = item;
-
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
   
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,14 +32,16 @@ const Item = ({ item, width }) => {
     setAnchorEl(null);
   };
 
-  const handleEditPrice = () => {
-    console.log(id)
+  const handleEditItem = () => {
+    setOpenEditDialog(true);
   };
 
-  const handleDisable = () => {
-    console.log(id)
-  };
-
+  const handleSubmit = (editName, editPrice, editCategory) => {
+    console.log(editName, editPrice, editCategory, id)
+    handleEdit(editName, editPrice, editCategory, id);
+    setOpenEditDialog(false);
+  }
+  
 
   return (
     <Box width={width}>
@@ -64,12 +66,10 @@ const Item = ({ item, width }) => {
             open={open}
             onClose={handleClose}
           >
-            <MenuItem key={'editPrice'} onClick={handleEditPrice}>
-              Edit Price
+            <MenuItem key={'editItem'} onClick={handleEditItem}>
+              Edit Item
             </MenuItem>
-            <MenuItem key={'disable'} onClick={handleDisable}>
-              Disable
-            </MenuItem>
+
           </Menu>
         </Box>
         <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" padding="2rem" >
@@ -77,35 +77,39 @@ const Item = ({ item, width }) => {
           <Typography>€ {price}</Typography> 
         </Box>
         <Box display="flex" justifyContent="space-between">
-        {/* AMOUNT */}
-        <Box
-          display="flex"
-          alignItems="center"
-          backgroundColor={shades.neutral[100]}
-          borderRadius="3px"
-        >
-          <IconButton onClick={() => setCount(Math.max(count - 1, 1))}>
-            <RemoveIcon />
-          </IconButton>
-          <Typography color={shades.primary[300]}>{count}</Typography>
-          <IconButton onClick={() => setCount(count + 1)}>
-            <AddIcon />
-          </IconButton>
-        </Box>
+          {/* AMOUNT */}
+          <Box
+            display="flex"
+            alignItems="center"
+            backgroundColor={shades.neutral[100]}
+            borderRadius="3px"
+          >
+            <IconButton onClick={() => setCount(Math.max(count - 1, 1))}>
+              <RemoveIcon />
+            </IconButton>
+            <Typography color={shades.primary[300]}>{count}</Typography>
+            <IconButton onClick={() => setCount(count + 1)}>
+              <AddIcon />
+            </IconButton>
+          </Box>
 
-        {/* BUTTON */}
-        <Button
-          onClick={() => {
-            dispatch(addToCart({ item: { ...item, count } }));
-          }}
-          sx={{ backgroundColor: shades.primary[300], color: "white" }}
-        >
-          Add to Cart
-        </Button>
+          {/* BUTTON */}
+          <Button
+            onClick={() => {
+              dispatch(addToCart({ item: { ...item, count } }));
+            }}
+            sx={{ backgroundColor: shades.primary[300], color: "white", "&:hover": {backgroundColor: shades.primary[200]} }}
+          >
+            Add to Cart
+          </Button>
+        </Box>
       </Box>
-      </Box>
-      
-      
+      <DialogEditPrice 
+        open={openEditDialog} 
+        item={item} 
+        handleClose={() => setOpenEditDialog(false)}
+        handleSubmit={handleSubmit}
+      />
     </Box>
   )
 };

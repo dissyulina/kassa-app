@@ -37,12 +37,21 @@ function Navbar() {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Box
-          onClick={() => navigate("/")}
-          sx={{ "&:hover": { cursor: "pointer" } }}
-          color={shades.secondary[500]}
-        >
-          KASSA APP
+        <Box display='flex' gap='2rem'>
+          <Box
+            onClick={() => navigate("/")}
+            sx={{ "&:hover": { cursor: "pointer" }, fontWeight: 'bold' }}
+            color={shades.primary[500]}
+          >
+            NEW ORDER
+          </Box>
+          <Box
+            onClick={() => navigate("/")}
+            sx={{ "&:hover": { cursor: "pointer" }, fontWeight: 'bold' }}
+            color={shades.primary[500]}
+          >
+            RETUR
+          </Box>
         </Box>
         <Box
           display="flex"
@@ -50,7 +59,6 @@ function Navbar() {
           columnGap="20px"
           zIndex="2"
         >
-         
           <Badge
             badgeContent={cart.length}
             color="secondary"

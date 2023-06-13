@@ -13,6 +13,11 @@ function CustomToolbar() {
 
 const columns = [
   {
+    field: 'id',
+    headerName: 'ID',
+    flex: 1,
+  },
+  {
     field: 'time',
     headerName: 'Created At',
     valueFormatter: params => new Date(params?.value).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: false}),
@@ -22,6 +27,21 @@ const columns = [
     field: 'order',
     headerName: 'Orders',
     flex: 6,
+  },
+  {
+    field: 'payment',
+    headerName: 'Payment',
+    flex: 1,
+  },
+  {
+    field: 'total',
+    headerName: 'Total Paid',
+    flex: 1,
+  },
+  {
+    field: 'received',
+    headerName: 'Total Received',
+    flex: 1,
   },
 ];
 
@@ -47,6 +67,9 @@ export default function DataGridDemo() {
         id: x.id,
         time: x.attributes.createdAt,
         order: x.attributes.products.map(obj => `${obj.name}: ${obj.count}`).join(', '),
+        payment: x.attributes.payment,
+        total: x.attributes.total,
+        received: x.attributes.payment === 'sumup' ? 0.981 * x.attributes.total : x.attributes.total
       })
     });
     setRows(dataForTable)
@@ -63,30 +86,23 @@ export default function DataGridDemo() {
     console.log("data", dataForTable)
     setData(ordersJson);
   }
-  //console.log(data)
+  console.log(data)
 
   return (
-    <Container>
-    <Box sx={{ height: '80vh', width: '100%', marginTop: '5rem' }}>
+  <Container sx={{ paddingTop: '5rem'}}>
+    <Box sx={{ height: '80vh', width: '100%' }}>
       <Typography variant="h3" textAlign="center" mb="24px">
         <b>All Orders</b>
       </Typography>
       <DataGrid
         rows={rows}
         columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 25,
-            },
-          },
-        }}
-        pageSizeOptions={[25]}
+        pageSizeOptions={[5, 10, 15, 20, 25]}
         slots={{toolbar: CustomToolbar}}
         disableRowSelectionOnClick
         rowHeight={40}
       />
     </Box>
-    </Container>
+  </Container>
   );
 }

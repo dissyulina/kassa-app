@@ -11,6 +11,7 @@ import { setItems } from "../../state";
 const MainMenu = () => {
   const dispatch = useDispatch();
   const [value, setValue] = useState("all");
+  const [reload, setReload] = useState(0);
   const items = useSelector((state) => state.cart.items);
   const breakPoint = useMediaQuery("(min-width:600px)");
   console.log("items", items)
@@ -31,7 +32,7 @@ const MainMenu = () => {
 
   useEffect(() => {
     getItems();
-  }, []);
+  }, [reload]);
 
   const nasiItems = items?.filter(
     (item) => item.attributes.category === "nasi"
@@ -48,6 +49,41 @@ const MainMenu = () => {
   const otherItems = items?.filter(
     (item) => item.attributes.category === "other"
   );
+
+  async function handleEdit(editName, editPrice, editCategory, id) {
+    console.log(editName, editPrice, editCategory, id)
+
+    const payload = { 
+      data: {
+        name: editName, 
+        price: editPrice, 
+        category: editCategory
+      }
+    };
+
+    const response = await fetch(`http://localhost:1337/api/items/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const session = await response.json();
+    console.log(response)
+    console.log(session)
+    if (response) {
+      if (response.status === 200) {
+        console.log("SUCCESS");
+        setReload(reload + 1);
+        //getAlertMessage('success', "Data is saved.")
+      }
+    }
+    if (session.error) {
+      console.log(session);
+      //getAlertMessage('warning', session.error.name)
+    }
+    
+  }
+
 
   return (
 		<Box width="80%" margin="80px auto">
@@ -86,23 +122,23 @@ const MainMenu = () => {
       >
         {value === "all" &&
           items.map((item) => (
-            <Item item={item} key={`${item.name}-${item.id}`} />
+            <Item item={item} key={`${item.name}-${item.id}`} handleEdit={handleEdit} />
           ))}
         {value === "nasi" &&
           nasiItems.map((item) => (
-            <Item item={item} key={`${item.name}-${item.id}`} />
+            <Item item={item} key={`${item.name}-${item.id}`} handleEdit={handleEdit} />
           ))}
         {value === "sate" &&
           sateItems.map((item) => (
-            <Item item={item} key={`${item.name}-${item.id}`} />
+            <Item item={item} key={`${item.name}-${item.id}`} handleEdit={handleEdit} />
           ))}
         {value === "other" &&
           otherItems.map((item) => (
-            <Item item={item} key={`${item.name}-${item.id}`} />
+            <Item item={item} key={`${item.name}-${item.id}`} handleEdit={handleEdit} />
           ))}
         {value === "drink" &&
           drinkItems.map((item) => (
-            <Item item={item} key={`${item.name}-${item.id}`} />
+            <Item item={item} key={`${item.name}-${item.id}`} handleEdit={handleEdit} />
           ))}
         {value === "snack" &&
           snackItems.map((item) => (

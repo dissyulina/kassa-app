@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import DialogEditPrice from './EditPrice';
+import AddEditItemForm from './AddEditItemForm';
 
 const Item = ({ item, handleEdit, width }) => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const Item = ({ item, handleEdit, width }) => {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const open = Boolean(anchorEl);
 
-  const { category, price, name, image} = item.attributes;
+  const { category, price, name} = item.attributes;
   const { id } = item;
   
   const handleClick = (event) => {
@@ -104,11 +104,12 @@ const Item = ({ item, handleEdit, width }) => {
           </Button>
         </Box>
       </Box>
-      <DialogEditPrice 
+      <AddEditItemForm 
         open={openEditDialog} 
         item={item} 
         handleClose={() => setOpenEditDialog(false)}
         handleSubmit={handleSubmit}
+        isEdit={true}
       />
     </Box>
   )

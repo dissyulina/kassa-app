@@ -21,7 +21,7 @@ import {
 } from "../../state";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "../../hooks/useSnackbar";
-import { Alert, AlertColor, Snackbar } from '@mui/material';
+
 
 const FlexBox = styled(Box)`
   display: flex;
@@ -45,17 +45,7 @@ const CartMenu = () => {
 
   console.log("cart", cart)
 
-  async function saveOrders(values) {
-    // const requestBody = {
-    //   //time: new Date(),
-    //   data: cart.map((product) => ({
-    //     id: product.id,
-    //     name: product.attributes.name,
-    //     count: product.count,
-    //     price: product.attributes.price,
-    //   })),
-    // };
-
+  async function saveOrders() {
     const requestBody = cart.map((product) => ({
       id: product.id,
       name: product.attributes.name,

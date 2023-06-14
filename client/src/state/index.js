@@ -15,7 +15,15 @@ export const cartSlice = createSlice({
     },
 
     addToCart: (state, action) => {
-      state.cart = [...state.cart, action.payload.item];
+      if (state.cart.find((item) => item.id === action.payload.id)) {
+        state.cart = state.cart.map((item) => {
+          if (item.id === action.payload.id) {
+            item.count++;
+          }
+        })
+      } else {
+        state.cart = [...state.cart, action.payload.item];
+      }
     },
 
     removeFromCart: (state, action) => {

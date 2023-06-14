@@ -13,10 +13,10 @@ import Select from '@mui/material/Select';
 import { shades } from "../theme";
 
 
-function DialogEditPrice({open, handleClose, item, handleSubmit}) {
-  const [editName, setEditName] = useState(item.attributes.name);
-  const [editPrice, setEditPrice] = useState(item.attributes.price);
-  const [editCategory, setEditCategory] = useState(item.attributes.category);
+function AddEditItemForm({open, handleClose, item, handleSubmit, isEdit}) {
+  const [editName, setEditName] = useState(item ? item.attributes.name : '');
+  const [editPrice, setEditPrice] = useState(item ? item.attributes?.price : 0);
+  const [editCategory, setEditCategory] = useState(item ? item.attributes?.category : '');
 
   console.log("Item", item)
 
@@ -59,7 +59,9 @@ function DialogEditPrice({open, handleClose, item, handleSubmit}) {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Edit Item</DialogTitle>
+      {isEdit ? 
+        <DialogTitle>Edit Item</DialogTitle> : <DialogTitle>Add Item</DialogTitle>
+      }
       <DialogContent>
         <DialogContentText>
         </DialogContentText>
@@ -71,7 +73,7 @@ function DialogEditPrice({open, handleClose, item, handleSubmit}) {
           type="text"
           fullWidth
           variant="outlined"
-          value={editName}
+          value={editName || ''}
           onChange={(event) => setEditName(event.target.value)}
         />
         <TextField
@@ -82,7 +84,7 @@ function DialogEditPrice({open, handleClose, item, handleSubmit}) {
           type="number"
           fullWidth
           variant="outlined"
-          value={editPrice}
+          value={editPrice || ''}
           onChange={(event) => setEditPrice(event.target.value)}
         />
         <FormControl fullWidth sx={{ marginTop: '0.5rem'}}>
@@ -90,7 +92,7 @@ function DialogEditPrice({open, handleClose, item, handleSubmit}) {
           <Select
             labelId="select-label"
             id="category"
-            value={editCategory}
+            value={editCategory || ''}
             label="Category"
             fullWidth
             input={<OutlinedInput label="Category" margin="dense"/>}
@@ -123,4 +125,4 @@ function DialogEditPrice({open, handleClose, item, handleSubmit}) {
   )
 }
 
-export default DialogEditPrice;
+export default AddEditItemForm;

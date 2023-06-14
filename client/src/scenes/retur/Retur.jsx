@@ -16,27 +16,34 @@ function CustomToolbar() {
     </GridToolbarContainer>
   )
 }
+
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'EUR',
+});
+
 function Retur() {
   const { AlertMessage, isVisible, getAlertMessage } = useSnackbar();
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState([]);
+  const [reload, setReload] = useState(0);
 
   const columns = [
     { field: 'id', headerName: 'ID', flex: 1 },
     { field: 'time', headerName: 'Created At', valueFormatter: params => new Date(params?.value).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: false}), flex: 1},
-    { field: 'item', headerName: 'Name', flex: 6 },
+    { field: 'item', headerName: 'Name', flex: 1 },
     { field: 'price', headerName: 'Price', flex: 1 },
     { field: 'quantity', headerName: 'Quantity', flex: 1 },
-    { field: 'total', headerName: 'Total', flex: 1 },
+    { field: 'total', headerName: 'Total', valueFormatter: ({ value }) => currencyFormatter.format(value), type: 'number', flex: 1 },
   ];
 
   useEffect(() => {
     getData();
-  },[])
+  },[reload])
 
   async function getData() {
     const retur = await fetch(
-      "http://localhost:1337/api/retur",
+      "http://localhost:1337/api/returs",
       { method: "GET" }
     );
     const returJson = await retur.json();
@@ -53,13 +60,15 @@ function Retur() {
         total: x.attributes.price * x.attributes.quantity,
       })
     });
+    console.log('dataForTable', dataForTable)
     setRows(dataForTable)
   }
+  console.log(rows)
 
   async function handleAddRetur (name, price, quantity) {
     console.log(name, price, quantity)
 
-    const response = await fetch("http://localhost:1337/api/retur", {
+    const response = await fetch("http://localhost:1337/api/returs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({data: { itemName: name, price, quantity }}),
@@ -79,6 +88,8 @@ function Retur() {
       console.log(session);
       getAlertMessage('warning', session.error.name || session.error.title)
     }
+    setOpen(false);
+    setReload(reload + 1);
   }
 
   return (
@@ -102,15 +113,15 @@ function Retur() {
       <DataGrid
         rows={rows}
         columns={columns}
+        //pageSizeOptions={[5]}
         //pageSizeOptions={[5, 10, 15, 20, 25]}
-        slots={{toolbar: CustomToolbar}}
-        disableRowSelectionOnClick
-        //rowHeight={40}
-        getRowHeight={() => 'auto'}
-        onRowEditCommit={(id, event) => console.log(id, event)}
+        //slots={{toolbar: CustomToolbar}}
+        //disableRowSelectionOnClick
+        rowHeight={30}
+        //getRowHeight={() => 'auto'}
+        //onRowEditCommit={(id, event) => console.log(id, event)}
         autoHeight
-        autoPageSize
-        loading
+        //autoPageSize
       />
       <ReturnItemForm 
         open={open} 

@@ -13,12 +13,26 @@ import { shades } from "../theme";
 import { useSelector } from "react-redux";
 
 function ReturnItemForm({open, handleClose, handleSubmit}) {
-  const items = useSelector((state) => state.cart.items);
   const [editName, setEditName] = useState('');
   const [editPrice, setEditPrice] = useState(0);
   const [editQuantity, setEditQuantity] = useState(1);
+  const [reload, setReload] = useState(0);
+  const [itemNames, setItemNames] = useState([]);
 
-  console.log("Items", items)
+  useEffect(() => {
+    getItems();
+  }, [reload]);
+
+  async function getItems() {
+    const items = await fetch(
+      "http://localhost:1337/api/items",
+      { method: "GET" }
+    );
+    const itemsJson = await items.json();
+    let itemNames = []
+    itemsJson.data.map(obj => itemNames.push(obj.attributes.name))
+    setItemNames(itemNames);
+  }
 
   const handleSave = () => {
     console.log(editName, editPrice, editQuantity)
@@ -40,7 +54,7 @@ function ReturnItemForm({open, handleClose, handleSubmit}) {
             input={<OutlinedInput label="Name" margin="dense"/>}
             onChange={(event) => setEditName(event.target.value)}
           > 
-            {items.map(obj => <MenuItem value={obj.attributes.name}>{obj.attributes.name}</MenuItem>)}
+            {itemNames?.sort().map((name, i) => <MenuItem key={i} value={name}>{name}</MenuItem>)}
           </Select>
         </FormControl>
         <TextField

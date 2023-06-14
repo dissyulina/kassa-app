@@ -84,11 +84,11 @@ const Item = ({ item, handleEdit, width }) => {
             backgroundColor={shades.neutral[100]}
             borderRadius="3px"
           >
-            <IconButton onClick={() => setCount(Math.max(count - 1, 1))}>
+            <IconButton onClick={() => setCount(Math.max(count - 1, 1))} sx={{width: '40px'}}>
               <RemoveIcon />
             </IconButton>
-            <Typography color={shades.primary[300]}>{count}</Typography>
-            <IconButton onClick={() => setCount(count + 1)}>
+            <Typography color={shades.primary[300]} sx={{ margin: '0 10px'}}>{count}</Typography>
+            <IconButton onClick={() => setCount(count + 1)} sx={{width: '40px'}}>
               <AddIcon />
             </IconButton>
           </Box>
@@ -98,7 +98,7 @@ const Item = ({ item, handleEdit, width }) => {
             onClick={() => {
               dispatch(addToCart({ item: { ...item, count } }));
             }}
-            sx={{ backgroundColor: shades.primary[300], color: "white", "&:hover": {backgroundColor: shades.primary[200]} }}
+            sx={{ backgroundColor: shades.primary[300], color: "white", padding: '1rem', "&:hover": {backgroundColor: shades.primary[200]} }}
           >
             Add to Cart
           </Button>

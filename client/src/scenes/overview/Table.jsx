@@ -26,7 +26,7 @@ const columns = [
   {
     field: 'order',
     headerName: 'Orders',
-    flex: 6,
+    flex: 3,
   },
   {
     field: 'payment',
@@ -50,12 +50,13 @@ const columns = [
   {
     field: 'received',
     headerName: 'Total Received',
+    valueFormatter: ({ value }) => currencyFormatter.format(value),
     type: 'number',
     flex: 1,
   },
 ];
 
-export default function DataGridDemo() {
+export default function OrderOverview() {
   const [data, setData] = useState(null);
   const [rows, setRows] = useState([]);
 
@@ -110,17 +111,16 @@ export default function DataGridDemo() {
         //pageSizeOptions={[5, 10, 15, 20, 25]}
         slots={{toolbar: CustomToolbar}}
         disableRowSelectionOnClick
-        //rowHeight={40}
-        getRowHeight={() => 'auto'}
+        rowHeight={30}
+        //getRowHeight={() => 'auto'}
         onRowEditCommit={(id, event) => console.log(id, event)}
         initialState={{
           sorting: {
             sortModel: [{ field: 'time', sort: 'desc' }],
           },
         }}
-        autoHeight
+        //autoHeight
         autoPageSize
-        loading
       />
     </Box>
   </Container>

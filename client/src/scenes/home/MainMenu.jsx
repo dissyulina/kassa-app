@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import AddIcon from '@mui/icons-material/Add';
 import { shades } from "../../theme";
 import Item from "../../components/Item";
-import { Typography, Fab } from "@mui/material";
+import { Typography, Button } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useDispatch, useSelector } from "react-redux";
 import { setItems } from "../../state";
@@ -79,10 +79,19 @@ const MainMenu = () => {
 
   async function handleAddItem(name, price, category) {
     console.log(name, price, category)
+
+    const payload = { 
+      data: {
+        name: name, 
+        price: price, 
+        category: category
+      }
+    };
+
     const response = await fetch("http://localhost:1337/api/items", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({data: { name, price, category }}),
+      body: JSON.stringify(payload),
     });
     const session = await response.json();
     showAlert(response, session);
@@ -108,12 +117,13 @@ const MainMenu = () => {
 		<Box width="80%" margin="80px auto">
       <Typography variant="h3" textAlign="center">
         <b>Our Menus <span>
-				<Fab size="small" variant="extended" 
-          sx={{ marginLeft: '0.5rem', paddingRight: '0.5rem', color: shades.primary[500]}} aria-label="add-item" 
+				<Button size="small"
+          sx={{ marginLeft: '0.5rem', padding: '0.5rem', backgroundColor: '#fff', border: `1px solid ${shades.primary[500]}`, color: shades.primary[700]}} 
+          aria-label="add-item" 
           onClick={() => setOpen(true)}>
 					<AddIcon sx={{ mr: 1 }}/>
           Add Item
-				</Fab>
+				</Button>
 			</span></b>
       </Typography>
       <Tabs
@@ -141,7 +151,7 @@ const MainMenu = () => {
       <Box
         margin="0 auto"
         display="grid"
-        gridTemplateColumns="repeat(auto-fill, 200px)"
+        gridTemplateColumns="repeat(auto-fill, 250px)"
         justifyContent="space-around"
         rowGap="20px"
         columnGap="1.33%"

@@ -46,7 +46,7 @@ function Navbar() {
             NEW ORDER
           </Box>
           <Box
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/retur")}
             sx={{ "&:hover": { cursor: "pointer" }, fontWeight: 'bold' }}
             color={shades.primary[500]}
           >

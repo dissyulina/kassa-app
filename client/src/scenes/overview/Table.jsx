@@ -11,12 +11,12 @@ function CustomToolbar() {
   )
 }
 
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'EUR',
+});
+
 const columns = [
-  {
-    field: 'id',
-    headerName: 'ID',
-    flex: 1,
-  },
   {
     field: 'time',
     headerName: 'Created At',
@@ -32,15 +32,25 @@ const columns = [
     field: 'payment',
     headerName: 'Payment',
     flex: 1,
+    editable: true,
+      type: "singleSelect",
+      valueOptions: [
+        { value: 'sumup', label: "Sum Up" },
+        { value: "cash", label: "Cash" },
+        { value: "qrcode", label: "QR Code" },
+      ],
   },
   {
     field: 'total',
     headerName: 'Total Paid',
+    valueFormatter: ({ value }) => currencyFormatter.format(value),
+    type: 'number',
     flex: 1,
   },
   {
     field: 'received',
     headerName: 'Total Received',
+    type: 'number',
     flex: 1,
   },
 ];
@@ -97,10 +107,20 @@ export default function DataGridDemo() {
       <DataGrid
         rows={rows}
         columns={columns}
-        pageSizeOptions={[5, 10, 15, 20, 25]}
+        //pageSizeOptions={[5, 10, 15, 20, 25]}
         slots={{toolbar: CustomToolbar}}
         disableRowSelectionOnClick
-        rowHeight={40}
+        //rowHeight={40}
+        getRowHeight={() => 'auto'}
+        onRowEditCommit={(id, event) => console.log(id, event)}
+        initialState={{
+          sorting: {
+            sortModel: [{ field: 'time', sort: 'desc' }],
+          },
+        }}
+        autoHeight
+        autoPageSize
+        loading
       />
     </Box>
   </Container>

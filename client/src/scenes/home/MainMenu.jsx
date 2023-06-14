@@ -2,16 +2,22 @@ import React, { useEffect, useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import AddIcon from '@mui/icons-material/Add';
+import { shades } from "../../theme";
 import Item from "../../components/Item";
-import { Typography } from "@mui/material";
+import { Typography, Fab } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useDispatch, useSelector } from "react-redux";
 import { setItems } from "../../state";
+import { useSnackbar } from "../../hooks/useSnackbar";
+import AddEditItemForm from "../../components/AddEditItemForm";
 
 const MainMenu = () => {
   const dispatch = useDispatch();
+  const { AlertMessage, isVisible, getAlertMessage } = useSnackbar();
   const [value, setValue] = useState("all");
   const [reload, setReload] = useState(0);
+  const [open, setOpen] = useState(false);
   const items = useSelector((state) => state.cart.items);
   const breakPoint = useMediaQuery("(min-width:600px)");
   console.log("items", items)
@@ -21,6 +27,10 @@ const MainMenu = () => {
     setValue(newValue);
   };
 
+  useEffect(() => {
+    getItems();
+  }, [reload]);
+
   async function getItems() {
     const items = await fetch(
       "http://localhost:1337/api/items",
@@ -29,10 +39,6 @@ const MainMenu = () => {
     const itemsJson = await items.json();
     dispatch(setItems(itemsJson.data));
   }
-
-  useEffect(() => {
-    getItems();
-  }, [reload]);
 
   const nasiItems = items?.filter(
     (item) => item.attributes.category === "nasi"
@@ -68,27 +74,47 @@ const MainMenu = () => {
     });
 
     const session = await response.json();
-    console.log(response)
-    console.log(session)
+    showAlert(response, session);
+  }
+
+  async function handleAddItem(name, price, category) {
+    console.log(name, price, category)
+    const response = await fetch("http://localhost:1337/api/items", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({data: { name, price, category }}),
+    });
+    const session = await response.json();
+    showAlert(response, session);
+  }
+
+  const showAlert = (response, session) => {
+    console.log('response', response)
+    console.log('session', session)
     if (response) {
       if (response.status === 200) {
+        setReload(reload + 1)
         console.log("SUCCESS");
-        setReload(reload + 1);
-        //getAlertMessage('success', "Data is saved.")
+        getAlertMessage('success', "Data is saved.")
       }
     }
     if (session.error) {
       console.log(session);
-      //getAlertMessage('warning', session.error.name)
+      getAlertMessage('warning', session.error.name || session.error.title)
     }
-    
   }
-
 
   return (
 		<Box width="80%" margin="80px auto">
       <Typography variant="h3" textAlign="center">
-        <b>Our Menus</b>
+        <b>Our Menus <span>
+				<Fab size="small" variant="extended" 
+          sx={{ marginLeft: '0.5rem', paddingRight: '0.5rem', color: shades.primary[500]}} aria-label="add-item" 
+          onClick={() => setOpen(true)}>
+					<AddIcon sx={{ mr: 1 }}/>
+          Add Item
+				</Fab>
+			</span></b>
       </Typography>
       <Tabs
         textColor="primary"
@@ -115,7 +141,7 @@ const MainMenu = () => {
       <Box
         margin="0 auto"
         display="grid"
-        gridTemplateColumns="repeat(auto-fill, 300px)"
+        gridTemplateColumns="repeat(auto-fill, 200px)"
         justifyContent="space-around"
         rowGap="20px"
         columnGap="1.33%"
@@ -145,7 +171,15 @@ const MainMenu = () => {
             <Item item={item} key={`${item.name}-${item.id}`} />
           ))}
       </Box>
-}
+      }
+      {isVisible === true ? <AlertMessage /> : ''}
+      
+      <AddEditItemForm
+        open={open} 
+        handleClose={() => setOpen(false)}
+        handleSubmit={handleAddItem}
+        isEdit={false}
+      />
     </Box>
 	)
 }

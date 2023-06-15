@@ -36,10 +36,12 @@ const columns = [
     editable: true,
       type: "singleSelect",
       valueOptions: [
+        { value: '', label: "" },
         { value: 'sumup', label: "Sum Up" },
         { value: "cash", label: "Cash" },
         { value: "qrcode", label: "QR Code" },
       ],
+    valueFormatter: ({ value }) => value === null ? '' : value,
   },
   {
     field: 'total',
@@ -99,6 +101,9 @@ export default function OrderOverview() {
     setData(ordersJson);
   }
   console.log(data)
+  const handleOnRowEdit = (id, event) => {
+    console.log(id, event)
+  }
 
   return (
   <Container sx={{ margin: "80px auto"}} >
@@ -114,15 +119,15 @@ export default function OrderOverview() {
         disableRowSelectionOnClick
         rowHeight={30}
         //getRowHeight={() => 'auto'}
-        onRowEditCommit={(id, event) => console.log(id, event)}
+        onCellEditCommit={(id, event) => handleOnRowEdit(id, event)}
         initialState={{
           sorting: {
             sortModel: [{ field: 'time', sort: 'desc' }],
           },
         }}
         //autoHeight
-       // autoPageSize
-       pageSize={25}
+        // autoPageSize
+        pageSize={25}
         pagination
         sx={{ border: 0, '& .MuiDataGrid-columnHeaders': {
           backgroundColor: shades.neutral[200]

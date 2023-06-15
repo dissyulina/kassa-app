@@ -1,25 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Container} from '@mui/material';
+import { Box, Typography, Container, Grid } from '@mui/material';
+import { alpha, styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import { DataGrid, GridToolbar, GridToolbarExport, GridToolbarContainer } from '@mui/x-data-grid';
 import { shades } from "../../theme";
 
+const StyledCard = styled(Card)({
+  display: 'flex', 
+  flexDirection: 'column', 
+  justifyContent: 'center', 
+  alignItems:'center', 
+  padding: '2rem',  
+  width:'200px',
+  backgroundColor: shades.neutral[100],
+  borderRadius: '10px'
+});
+
 function SalesOverview() {
-  const [ordersQuantityData, setOrdersQuantityData] = useState(null);
-  const [ordersPaymentData, setOrdersPaymentData] = useState(null);
+  const [ordersData, setOrdersData] = useState([]);
+  const [ordersQuantityData, setOrdersQuantityData] = useState([]);
+  const [ordersPaymentData, setOrdersPaymentData] = useState([]);
   const [itemsData, setItemsData] = useState([]);
+  const [retursData, setRetursData] = useState([]);
   const [totalSales, setTotalSales] = useState(0);
-  const [orderPerItemData, setOrderPerItemData] = useState(0);
+  const [totalItemsSold, setTotalItemsSold] = useState(0);
+  const [orderPerItemData, setOrderPerItemData] = useState([]);
   
   useEffect(() => {
     getItems();
     getOrders();
-    getOrderPerItem();
   },[])
 
   useEffect(() => {
     getOrderPerItem();
-  },[itemsData, ordersQuantityData])
+  },[itemsData, ordersQuantityData ])
 
   async function getItems() {
     const items = await fetch(
@@ -41,6 +55,27 @@ function SalesOverview() {
   }
 
   async function getOrders() {
+    // RETUR
+    const returs = await fetch(
+      "http://localhost:1337/api/returs",
+      { method: "GET" }
+    );
+    const retursJson = await returs.json();
+    console.log("retursJson", retursJson)
+
+    let retursData = []
+    retursJson.data.map(x => retursData.push({ 
+      id: x.id, 
+      name: x.attributes.itemName,
+      price: x.attributes.price,
+      quantity: x.attributes.quantity,
+      amount: x.attributes.price * x.attributes.quantity
+    }));
+    
+    // ORDERS
+    console.log("data returs", retursData)
+    setRetursData(retursData);
+
     const orders = await fetch(
       "http://localhost:1337/api/orders",
       { method: "GET" }
@@ -50,6 +85,7 @@ function SalesOverview() {
     let ordersData = []
     ordersJson.data.map(x => ordersData.push(x.attributes));
     console.log("ordersData", ordersData)
+    setOrdersData(ordersData);
 
     let quantityData = []
     ordersData.map(x => x.products.map(y => {
@@ -65,13 +101,29 @@ function SalesOverview() {
     console.log("orders quantity data", quantityData)
     setOrdersQuantityData(quantityData);
 
+    // CALCULATE TOTAL SALES
     const totalSales = quantityData.reduce((sum, obj) => {
       return sum + obj.amount;
     }, 0);
-    console.log('totalSales', totalSales)
+ 
+    const totalReturAmount = retursData.reduce((sum, obj) => {
+      return sum + obj.amount;
+    }, 0);
+ 
+    setTotalSales(totalSales - totalReturAmount)
 
-    setTotalSales(totalSales)
+    // TOTAL ITEMS SOLD
+    const totalItems= quantityData.reduce((sum, obj) => {
+      return sum + obj.quantity;
+    }, 0);
+ 
+    const totalReturQuantity = retursData.reduce((sum, obj) => {
+      return sum + obj.quantity;
+    }, 0);
+ 
+    setTotalItemsSold(totalItems - totalReturQuantity)
 
+    // PAYMENT DATA
     const paymentData = ['cash', 'sumup', 'qrcode', 'undefined'].map(x => {
       const paymentAmount = quantityData.reduce((sum, obj) => {
         if (obj.payment=== x) {
@@ -109,12 +161,26 @@ function SalesOverview() {
         return sum;
       }, 0);
 
+      const returQuantity = retursData.reduce((sum, obj) => {
+        if (obj.name === x.name) {
+          return sum + obj.quantity;
+        }
+        return sum;
+      }, 0);
+
+      const returAmount = retursData.reduce((sum, obj) => {
+        if (obj.name === x.name) {
+          return sum + obj.amount;
+        }
+        return sum;
+      }, 0);
+
       return (
         { 
           id: x.id,
           name: x.name,
-          quantity: quantity,
-          amount: amount
+          quantity: quantity - returQuantity,
+          amount: amount - returAmount
         }
       )
     })
@@ -123,16 +189,86 @@ function SalesOverview() {
     setOrderPerItemData(orderPerItemData);
   }
 
+  const orderPerItemColumn = [
+    { field: 'name', headerName: 'Item Name', flex: 1 },
+    { field: 'quantity', headerName: 'Quantity Sold', type: 'number', flex: 1 },
+    { field: 'amount', headerName: 'Total Amount', valueFormatter: ({ value }) => currencyFormatter.format(value), type: 'number', flex: 1 },
+  ];
+
+  const orderPerPaymentColumn = [
+    { field: 'id', headerName: 'Payment Type', flex: 1  },
+    { field: 'count', headerName: 'Quantity', type: 'number', flex: 1 },
+    { field: 'amount', headerName: 'Total Amount', valueFormatter: ({ value }) => currencyFormatter.format(value), type: 'number', flex: 1 },
+  ];
+
+  const currencyFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'EUR',
+  });
+  
+
   return (
-    <Container sx={{ margin: "80px auto"}} >
-      <Typography variant="h3" textAlign="center" mb="24px">
+    <Container sx={{ margin: "80px auto", width: '100%'}} >
+      <Typography variant="h3" textAlign="center" mb="2rem">
         <b>Sales Overview</b>
-      </Typography>
-      <Card sx={{ display: 'flex', justifyContent: 'center', alignItems:'center', padding: '2rem', border: '1px solid black', width:'fit-content'}}>
-        <Typography variant="h4" >
-          Total Sales: €{totalSales}
-        </Typography>
-      </Card>
+      </Typography> 
+      <Grid container>
+        <Grid item xs={12} sm={4} sx={{display: 'flex', justifyContent:'center'}}>
+          <StyledCard>
+            <Typography variant="body1" >Total Sales</Typography>
+            <Typography variant="h5" ><b>€{totalSales}</b></Typography>
+          </StyledCard>
+        </Grid>
+        <Grid item xs={12} sm={4} sx={{display: 'flex', justifyContent:'center'}}>
+          <StyledCard>
+            <Typography variant="body1" >Total Transactions</Typography>
+            <Typography variant="h5" ><b>{ordersData?.length}</b></Typography>
+          </StyledCard>
+        </Grid>
+        <Grid item xs={12} sm={4} sx={{display: 'flex', justifyContent:'center'}}>
+          <StyledCard>
+            <Typography variant="body1" >Total Items Sold</Typography>
+            <Typography variant="h5" ><b>{totalItemsSold}</b></Typography>
+          </StyledCard>
+        </Grid>
+      </Grid>
+      <Box width='100%' sx={{display: 'flex', justifyContent:'center'}}>
+        <DataGrid
+          rows={orderPerItemData}
+          columns={orderPerItemColumn}
+          rowHeight={30}
+          autoHeight
+          pageSize={25}
+          pagination
+          sx={{ border: 0, 
+            width: '600px',
+            marginTop: '2rem',
+            '& .MuiDataGrid-columnHeaders': {
+              backgroundColor: shades.neutral[200]
+            }
+          }}
+          hideFooterPagination
+        />
+      </Box>
+      <Box width='100%' sx={{display: 'flex', justifyContent:'center'}}>
+        <DataGrid
+          rows={ordersPaymentData}
+          columns={orderPerPaymentColumn}
+          width='fit-content'
+          rowHeight={30}
+          autoHeight
+          pageSize={25}
+          pagination
+          sx={{ border: 0, 
+            width: '600px', 
+            '& .MuiDataGrid-columnHeaders': {
+              backgroundColor: shades.neutral[200]
+            }
+          }}
+          hideFooterPagination
+        />
+      </Box>
+      
     </Container>
   )
 }

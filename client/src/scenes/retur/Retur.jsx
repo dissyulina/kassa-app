@@ -122,6 +122,8 @@ function Retur() {
         //onRowEditCommit={(id, event) => console.log(id, event)}
         autoHeight
         //autoPageSize
+        pageSize={25}
+        pagination
         sx={{ border: 0, '& .MuiDataGrid-columnHeaders': {
           backgroundColor: shades.neutral[200]
         }}}

@@ -3,7 +3,7 @@ Columns: itemName, price, quantity
 */
 
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, Container } from "@mui/material";
 import { DataGrid, GridToolbar, GridToolbarExport, GridToolbarContainer } from '@mui/x-data-grid';
 import { shades } from "../../theme";
 import ReturnItemForm from '../../components/ReturnItemForm';
@@ -93,7 +93,7 @@ function Retur() {
   }
 
   return (
-    <Box width="80%" margin="80px auto">
+    <Container sx={{ margin: "80px auto"}} >
       <Typography variant="h3" textAlign="center">
         <b>Retur</b>
       </Typography>
@@ -122,6 +122,9 @@ function Retur() {
         //onRowEditCommit={(id, event) => console.log(id, event)}
         autoHeight
         //autoPageSize
+        sx={{ border: 0, '& .MuiDataGrid-columnHeaders': {
+          backgroundColor: shades.neutral[200]
+        }}}
       />
       <ReturnItemForm 
         open={open} 
@@ -129,7 +132,7 @@ function Retur() {
         handleSubmit={handleAddRetur}
       />
       {isVisible === true ? <AlertMessage /> : ''}
-    </Box>
+    </Container>
   )
 }
 

@@ -4,9 +4,10 @@ import Home from './scenes/home/Home';
 import Navbar from './scenes/global/Navbar';
 import CartMenu from './scenes/global/CartMenu';
 import Footer from './scenes/global/Footer';
-import Table from './scenes/overview/Table';
+import OrderOverview from './scenes/overview/AllOrders';
 import Admin from './scenes/admin/Admin';
 import Retur from './scenes/retur/Retur';
+import SalesOverview from './scenes/overview/SalesOverview';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -24,9 +25,10 @@ function App() {
         <ScrollToTop/>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/overview" element={<Table />} />
+          <Route path="/allorders" element={<OrderOverview />} />
           <Route path="/retur" element={<Retur />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/overview" element={<SalesOverview />} />
         </Routes>
         <CartMenu/>
         {/* <Footer /> */}

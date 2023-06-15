@@ -80,10 +80,10 @@ function Navbar() {
               <ShoppingBasketOutlined />
             </IconButton>
           </Badge>
-          <IconButton sx={{ color: "black" }} onClick={() => navigate("/overview")}>
+          <IconButton sx={{ color: "black" }} onClick={() => navigate("/allorders")}>
             <TableRowsOutlined />
           </IconButton>
-          <IconButton sx={{ color: "black" }} onClick={() => navigate("/")}>
+          <IconButton sx={{ color: "black" }} onClick={() => navigate("/overview")}>
             <BarChartOutlined />
           </IconButton>
           <IconButton sx={{ color: "black" }} onClick={() => navigate("/admin")}>

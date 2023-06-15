@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { DataGrid, GridToolbar, GridToolbarExport, GridToolbarContainer } from '@mui/x-data-grid';
 import { Container } from '@mui/material';
+import { shades } from "../../theme";
 
 function CustomToolbar() {
   return (
@@ -100,15 +101,15 @@ export default function OrderOverview() {
   console.log(data)
 
   return (
-  <Container sx={{ paddingTop: '5rem'}}>
-    <Box sx={{ height: '80vh', width: '100%' }}>
+  <Container sx={{ margin: "80px auto"}} >
+    <Box sx={{ width: '100%' }}>
       <Typography variant="h3" textAlign="center" mb="24px">
         <b>All Orders</b>
       </Typography>
       <DataGrid
         rows={rows}
         columns={columns}
-        //pageSizeOptions={[5, 10, 15, 20, 25]}
+        //pageSizeOptions={[10, 20, 25]}
         slots={{toolbar: CustomToolbar}}
         disableRowSelectionOnClick
         rowHeight={30}
@@ -120,7 +121,12 @@ export default function OrderOverview() {
           },
         }}
         //autoHeight
-        autoPageSize
+       // autoPageSize
+       pageSize={25}
+        pagination
+        sx={{ border: 0, '& .MuiDataGrid-columnHeaders': {
+          backgroundColor: shades.neutral[200]
+        }}}
       />
     </Box>
   </Container>

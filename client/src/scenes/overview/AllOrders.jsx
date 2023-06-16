@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { DataGrid, GridToolbar, GridToolbarExport, GridToolbarContainer } from '@mui/x-data-grid';
 import { Container } from '@mui/material';
 import { shades } from "../../theme";
+import { useSnackbar } from "../../hooks/useSnackbar";
 
 function CustomToolbar() {
   return (
@@ -34,13 +35,13 @@ const columns = [
     headerName: 'Payment',
     flex: 1,
     editable: true,
-      type: "singleSelect",
-      valueOptions: [
-        { value: '', label: "" },
-        { value: 'sumup', label: "Sum Up" },
-        { value: "cash", label: "Cash" },
-        { value: "qrcode", label: "QR Code" },
-      ],
+    type: "singleSelect",
+    valueOptions: [
+      { value: '', label: "" },
+      { value: 'sumup', label: "Sum Up" },
+      { value: "cash", label: "Cash" },
+      { value: "qrcode", label: "QR Code" },
+    ],
     valueFormatter: ({ value }) => value === null ? '' : value,
   },
   {
@@ -60,6 +61,7 @@ const columns = [
 ];
 
 export default function OrderOverview() {
+  const { AlertMessage, isVisible, getAlertMessage } = useSnackbar();
   const [data, setData] = useState(null);
   const [rows, setRows] = useState([]);
 
@@ -101,9 +103,35 @@ export default function OrderOverview() {
     setData(ordersJson);
   }
   console.log(data)
-  const handleOnRowEdit = (id, event) => {
-    console.log(id, event)
-  }
+
+  async function processRowUpdate(newRow) {
+    console.log(newRow)
+    const updatedRow = { ...newRow, isNew: false };
+    console.log(updatedRow);
+
+    const payload = { data: { payment: newRow.payment }}
+    
+    const response = await fetch(`http://localhost:1337/api/orders/${newRow.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const session = await response.json();
+    if (response) {
+      console.log(response)
+      if (response.status === 200) {
+        console.log("SUCCESS");
+        getAlertMessage('success', "Data is saved.")
+      }
+    }
+    if (session.error) {
+      console.log(session);
+      getAlertMessage('warning', session.error.name || session.error.title)
+    }
+
+    return updatedRow;
+  };
 
   return (
   <Container sx={{ margin: "80px auto"}} >
@@ -114,19 +142,15 @@ export default function OrderOverview() {
       <DataGrid
         rows={rows}
         columns={columns}
-        //pageSizeOptions={[10, 20, 25]}
         slots={{toolbar: CustomToolbar}}
         disableRowSelectionOnClick
         rowHeight={30}
-        //getRowHeight={() => 'auto'}
-        onCellEditCommit={(id, event) => handleOnRowEdit(id, event)}
+        processRowUpdate={processRowUpdate}
         initialState={{
           sorting: {
             sortModel: [{ field: 'time', sort: 'desc' }],
           },
         }}
-        //autoHeight
-        // autoPageSize
         pageSize={25}
         pagination
         sx={{ border: 0, '& .MuiDataGrid-columnHeaders': {
@@ -134,6 +158,7 @@ export default function OrderOverview() {
         }}}
       />
     </Box>
+    {isVisible === true ? <AlertMessage /> : ''}
   </Container>
   );
 }

@@ -17,6 +17,10 @@ function Navbar() {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
 
+  const numberOfItem = cart.reduce((sum, obj) => {
+    return sum + obj.count;
+  }, 0);
+
   return (
     <Box
       display="flex"
@@ -60,9 +64,9 @@ function Navbar() {
           zIndex="2"
         >
           <Badge
-            badgeContent={cart.length}
+            badgeContent={numberOfItem}
             color="secondary"
-            invisible={cart.length === 0}
+            invisible={numberOfItem === 0}
             sx={{
               "& .MuiBadge-badge": {
                 right: 5,

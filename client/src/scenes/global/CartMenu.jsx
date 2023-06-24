@@ -43,8 +43,6 @@ const CartMenu = () => {
     return total + item.count * item.attributes.price;
   }, 0);
 
-  console.log("cart", cart)
-
   async function saveOrders() {
     const requestBody = cart.map((product) => ({
       id: product.id,
@@ -54,8 +52,6 @@ const CartMenu = () => {
     }))
   
     const payload = { data: {products: requestBody, payment: selectedPayment, total: totalPrice}}
-    
-    console.log("requestBody", requestBody)
 
     const response = await fetch("http://localhost:1337/api/orders", {
       method: "POST",
@@ -64,16 +60,13 @@ const CartMenu = () => {
       //body: JSON.stringify({ data: [{ id: 3, name: 'Siomay', count: 1, price: 10 }, { id: 2, name: 'Bubur Ayam', count: 1, price: 5.5 }] }),
     });
     const session = await response.json();
-    console.log(session)
+
     if (response) {
-      console.log(response)
       if (response.status === 200) {
-        console.log("SUCCESS");
         getAlertMessage('success', "Data is saved.")
       }
     }
     if (session.error) {
-      console.log(session);
       getAlertMessage('warning', session.error.name || session.error.title)
     }
     setTimeout(() => {
@@ -85,8 +78,6 @@ const CartMenu = () => {
   const handleCalculate = () => {
     setChange(amountGiven - totalPrice);
   }
-
-  console.log(selectedPayment)
 
   return (
     <Box

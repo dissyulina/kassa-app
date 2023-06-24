@@ -10,18 +10,12 @@ export function useSnackbar() {
   const hideMessage= () => setIsVisible(false);
 
   const getAlertMessage = (variant, message) => {
-    //setTimeout(() => {
       setVariant(variant);
       setMessage(message);
       showMessage();
-    //}, 0);
   };
 
-  console.log(isVisible)
-  console.log(variant, message)
-
  const AlertMessage = () => {
-  console.log(' alertmessage')
   return(
     <Snackbar open={isVisible} autoHideDuration={2000} onClose={hideMessage}>
       <Alert onClose={hideMessage} severity={variant}>

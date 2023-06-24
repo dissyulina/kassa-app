@@ -18,8 +18,6 @@ const Admin = () => {
       { method: "GET" }
     );
     const itemsJson = await items.json();
-    console.log(itemsJson)
-    //dispatch(setItems(itemsJson.data));
   }
 
   useEffect(() => {

@@ -16,6 +16,14 @@ const StyledCard = styled(Card)({
   borderRadius: '10px'
 });
 
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport />
+    </GridToolbarContainer>
+  )
+}
+
 function SalesOverview() {
   const [ordersData, setOrdersData] = useState([]);
   const [ordersQuantityData, setOrdersQuantityData] = useState([]);
@@ -41,7 +49,6 @@ function SalesOverview() {
       { method: "GET" }
     );
     const itemsJson = await items.json();
-    console.log("itemsJson", itemsJson)
 
     let itemsData = []
     itemsJson.data.map(x => itemsData.push({ 
@@ -50,7 +57,6 @@ function SalesOverview() {
       category: x.attributes.category
     }));
     
-    console.log("data items", itemsData)
     setItemsData(itemsData);
   }
 
@@ -61,7 +67,6 @@ function SalesOverview() {
       { method: "GET" }
     );
     const retursJson = await returs.json();
-    console.log("retursJson", retursJson)
 
     let retursData = []
     retursJson.data.map(x => retursData.push({ 
@@ -73,7 +78,6 @@ function SalesOverview() {
     }));
     
     // ORDERS
-    console.log("data returs", retursData)
     setRetursData(retursData);
 
     const orders = await fetch(
@@ -84,7 +88,6 @@ function SalesOverview() {
     
     let ordersData = []
     ordersJson.data.map(x => ordersData.push(x.attributes));
-    console.log("ordersData", ordersData)
     setOrdersData(ordersData);
 
     let quantityData = []
@@ -98,7 +101,6 @@ function SalesOverview() {
       })
     }));
     
-    console.log("orders quantity data", quantityData)
     setOrdersQuantityData(quantityData);
 
     // CALCULATE TOTAL SALES
@@ -141,7 +143,6 @@ function SalesOverview() {
       )
     })
 
-    console.log("orders payment data", paymentData)
     setOrdersPaymentData(paymentData);
   }
 
@@ -185,7 +186,6 @@ function SalesOverview() {
       )
     })
 
-    console.log("order per item", orderPerItemData)
     setOrderPerItemData(orderPerItemData);
   }
 
@@ -240,6 +240,7 @@ function SalesOverview() {
           autoHeight
           pageSize={25}
           pagination
+          slots={{toolbar: CustomToolbar}}
           sx={{ border: 0, 
             width: '600px',
             marginTop: '2rem',
@@ -259,6 +260,7 @@ function SalesOverview() {
           autoHeight
           pageSize={25}
           pagination
+          slots={{toolbar: CustomToolbar}}
           sx={{ border: 0, 
             width: '600px', 
             '& .MuiDataGrid-columnHeaders': {

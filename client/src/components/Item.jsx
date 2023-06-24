@@ -37,12 +37,10 @@ const Item = ({ item, handleEdit, width }) => {
   };
 
   const handleSubmit = (editName, editPrice, editCategory) => {
-    console.log(editName, editPrice, editCategory, id)
     handleEdit(editName, editPrice, editCategory, id);
     setOpenEditDialog(false);
   }
   
-
   return (
     <Box width={width}>
       <Box display="flex" flexDirection="column" justifyContent="start" border="1px solid black" >

@@ -20,8 +20,6 @@ const MainMenu = () => {
   const [open, setOpen] = useState(false);
   const items = useSelector((state) => state.cart.items);
   const breakPoint = useMediaQuery("(min-width:600px)");
-  console.log("items", items)
-  console.log("value", value)
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -57,8 +55,6 @@ const MainMenu = () => {
   );
 
   async function handleEdit(editName, editPrice, editCategory, id) {
-    console.log(editName, editPrice, editCategory, id)
-
     const payload = { 
       data: {
         name: editName, 
@@ -78,8 +74,6 @@ const MainMenu = () => {
   }
 
   async function handleAddItem(name, price, category) {
-    console.log(name, price, category)
-
     const payload = { 
       data: {
         name: name, 
@@ -98,17 +92,13 @@ const MainMenu = () => {
   }
 
   const showAlert = (response, session) => {
-    console.log('response', response)
-    console.log('session', session)
     if (response) {
       if (response.status === 200) {
         setReload(reload + 1)
-        console.log("SUCCESS");
         getAlertMessage('success', "Data is saved.")
       }
     }
     if (session.error) {
-      console.log(session);
       getAlertMessage('warning', session.error.name || session.error.title)
     }
   }

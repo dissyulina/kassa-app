@@ -18,44 +18,9 @@ function AddEditItemForm({open, handleClose, item, handleSubmit, isEdit}) {
   const [editPrice, setEditPrice] = useState(item ? item.attributes?.price : 0);
   const [editCategory, setEditCategory] = useState(item ? item.attributes?.category : '');
 
-  console.log("Item", item)
-
   const handleSave = () => {
-    console.log(editName, editPrice, editCategory)
     handleSubmit(editName, editPrice, editCategory)
-  }
-
-  // async function handleSubmit() {
-  //   console.log(editName, editPrice, editCategory)
-
-  //   const payload = { 
-  //     data: {
-  //       name: editName, 
-  //       price: editPrice, 
-  //       category: editCategory
-  //     }
-  //   };
-
-  //   const response = await fetch(`http://localhost:1337/api/items/${item.id}`, {
-  //     method: "PUT",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(payload),
-  //   });
-
-  //   const session = await response.json();
-  //   console.log(session)
-  //   if (response) {
-  //     if (response.status === 200) {
-  //       console.log("SUCCESS");
-  //       //getAlertMessage('success', "Data is saved.")
-  //     }
-  //   }
-  //   if (session.error) {
-  //     console.log(session);
-  //     //getAlertMessage('warning', session.error.name)
-  //   }
-    
-  // }
+  };
 
   return (
     <Dialog open={open} onClose={handleClose}>

@@ -32,12 +32,11 @@ function ReturnItemForm({open, handleClose, handleSubmit}) {
     let itemNames = []
     itemsJson.data.map(obj => itemNames.push(obj.attributes.name))
     setItemNames(itemNames);
-  }
+  };
 
   const handleSave = () => {
-    console.log(editName, editPrice, editQuantity)
-    handleSubmit(editName, editPrice, editQuantity)
-  }
+    handleSubmit(editName, editPrice, editQuantity);
+  };
 
   return (
     <Dialog open={open} onClose={handleClose}>

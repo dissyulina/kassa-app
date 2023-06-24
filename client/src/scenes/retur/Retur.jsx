@@ -1,7 +1,3 @@
-/* Create a new table called retur
-Columns: itemName, price, quantity
-*/
-
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button, Container } from "@mui/material";
 import { DataGrid, GridToolbar, GridToolbarExport, GridToolbarContainer } from '@mui/x-data-grid';
@@ -47,7 +43,6 @@ function Retur() {
       { method: "GET" }
     );
     const returJson = await retur.json();
-    console.log("returJson", returJson)
 
     let dataForTable = []
     returJson.data.map(x => {
@@ -60,13 +55,10 @@ function Retur() {
         total: x.attributes.price * x.attributes.quantity,
       })
     });
-    console.log('dataForTable', dataForTable)
     setRows(dataForTable)
   }
-  console.log(rows)
 
   async function handleAddRetur (name, price, quantity) {
-    console.log(name, price, quantity)
 
     const response = await fetch("http://localhost:1337/api/returs", {
       method: "POST",
@@ -76,11 +68,8 @@ function Retur() {
     });
     const session = await response.json();
 
-    console.log(session)
     if (response) {
-      console.log(response)
       if (response.status === 200) {
-        console.log("SUCCESS");
         getAlertMessage('success', "Data is saved.")
       }
     }
@@ -113,20 +102,14 @@ function Retur() {
       <DataGrid
         rows={rows}
         columns={columns}
-        //pageSizeOptions={[5]}
-        //pageSizeOptions={[5, 10, 15, 20, 25]}
-        //slots={{toolbar: CustomToolbar}}
-        //disableRowSelectionOnClick
         rowHeight={30}
-        //getRowHeight={() => 'auto'}
-        //onRowEditCommit={(id, event) => console.log(id, event)}
         autoHeight
-        //autoPageSize
         pageSize={25}
         pagination
         sx={{ border: 0, '& .MuiDataGrid-columnHeaders': {
           backgroundColor: shades.neutral[200]
         }}}
+        slots={{toolbar: CustomToolbar}}
       />
       <ReturnItemForm 
         open={open} 

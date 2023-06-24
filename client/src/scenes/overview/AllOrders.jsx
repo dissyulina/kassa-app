@@ -75,7 +75,6 @@ export default function OrderOverview() {
       { method: "GET" }
     );
     const ordersJson = await orders.json();
-    console.log("ordersJson", ordersJson)
 
     let dataForTable = []
     ordersJson.data.map(x => {
@@ -99,15 +98,11 @@ export default function OrderOverview() {
       })
     }))
     
-    console.log("data", dataForTable)
     setData(ordersJson);
   }
-  console.log(data)
 
   async function processRowUpdate(newRow) {
-    console.log(newRow)
     const updatedRow = { ...newRow, isNew: false };
-    console.log(updatedRow);
 
     const payload = { data: { payment: newRow.payment }}
     
@@ -119,9 +114,7 @@ export default function OrderOverview() {
 
     const session = await response.json();
     if (response) {
-      console.log(response)
       if (response.status === 200) {
-        console.log("SUCCESS");
         getAlertMessage('success', "Data is saved.")
       }
     }

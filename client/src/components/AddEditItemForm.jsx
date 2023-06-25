@@ -14,12 +14,18 @@ import { shades } from "../theme";
 
 
 function AddEditItemForm({open, handleClose, item, handleSubmit, isEdit}) {
-  const [editName, setEditName] = useState(item ? item.attributes.name : '');
-  const [editPrice, setEditPrice] = useState(item ? item.attributes?.price : 0);
-  const [editCategory, setEditCategory] = useState(item ? item.attributes?.category : '');
+  const [editName, setEditName] = useState(isEdit ? item.attributes.name : '');
+  const [editPrice, setEditPrice] = useState(isEdit ? item.attributes?.price : 0);
+  const [editCategory, setEditCategory] = useState(isEdit ? item.attributes?.category : '');
 
-  const handleSave = () => {
-    handleSubmit(editName, editPrice, editCategory)
+  useEffect(() => {
+    setEditName(isEdit ? item.attributes.name : '');
+    setEditPrice(isEdit ? item.attributes?.price : 0);
+    setEditCategory(isEdit ? item.attributes?.category : '')
+  },[open])
+
+  const handleSave = () => {  
+    handleSubmit(editName, editPrice, editCategory);
   };
 
   return (
@@ -42,7 +48,6 @@ function AddEditItemForm({open, handleClose, item, handleSubmit, isEdit}) {
           onChange={(event) => setEditName(event.target.value)}
         />
         <TextField
-          autoFocus
           margin="dense"
           id="price"
           label="Price"
@@ -81,7 +86,11 @@ function AddEditItemForm({open, handleClose, item, handleSubmit, isEdit}) {
           Cancel
         </Button>
         <Button onClick={handleSave} 
-          sx={{ backgroundColor: shades.primary[200], color: "white", padding: '0.5rem 1.25rem'}}
+          sx={{ backgroundColor: shades.primary[300], 
+            color: "white", 
+            padding: '0.5rem 1.25rem', 
+            "&:hover": {backgroundColor: shades.primary[200]}
+          }}
         >
           Save
         </Button>

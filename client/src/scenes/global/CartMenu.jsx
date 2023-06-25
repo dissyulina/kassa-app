@@ -72,7 +72,10 @@ const CartMenu = () => {
     setTimeout(() => {
       dispatch(setIsCartOpen({}));
       dispatch(emptyCart({}));
-    }, 1500)
+      setSelectedPayment(null);
+      setAmountGiven(null);
+      setChange(null);
+    }, 500)
   }
 
   const handleCalculate = () => {

@@ -33,6 +33,7 @@ const Item = ({ item, handleEdit, width }) => {
   };
 
   const handleEditItem = () => {
+    handleClose();
     setOpenEditDialog(true);
   };
 
@@ -67,7 +68,6 @@ const Item = ({ item, handleEdit, width }) => {
             <MenuItem key={'editItem'} onClick={handleEditItem}>
               Edit Item
             </MenuItem>
-
           </Menu>
         </Box>
         <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" padding="2rem" >

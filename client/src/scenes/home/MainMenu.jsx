@@ -70,6 +70,7 @@ const MainMenu = () => {
     });
 
     const session = await response.json();
+    setOpen(false);
     showAlert(response, session);
   }
 
@@ -88,6 +89,7 @@ const MainMenu = () => {
       body: JSON.stringify(payload),
     });
     const session = await response.json();
+    setOpen(false);
     showAlert(response, session);
   }
 

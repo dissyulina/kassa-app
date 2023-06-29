@@ -41,7 +41,7 @@ function Navbar() {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Box display='flex' gap='2rem'>
+        <Box display='flex' justifyContent="space-between" columnGap="20px">
           <Box
             onClick={() => navigate("/")}
             sx={{ "&:hover": { cursor: "pointer" }, fontWeight: 'bold' }}
@@ -90,9 +90,9 @@ function Navbar() {
           <IconButton sx={{ color: "black" }} onClick={() => navigate("/overview")}>
             <BarChartOutlined />
           </IconButton>
-          <IconButton sx={{ color: "black" }} onClick={() => navigate("/admin")}>
+          {/* <IconButton sx={{ color: "black" }} onClick={() => navigate("/admin")}>
             <AdminPanelSettingsOutlined />
-          </IconButton>
+          </IconButton> */}
         </Box>
       </Box>
     </Box>

@@ -31,7 +31,7 @@ const MainMenu = () => {
 
   async function getItems() {
     const items = await fetch(
-      "http://localhost:1337/api/items",
+      "http://localhost:1337/api/items?pagination[page]=1&pagination[pageSize]=100",
       { method: "GET" }
     );
     const itemsJson = await items.json();
@@ -52,6 +52,9 @@ const MainMenu = () => {
   );
   const otherItems = items?.filter(
     (item) => item.attributes.category === "other"
+  );
+  const softDrinkItems = items?.filter(
+    (item) => item.attributes.category === "softdrink"
   );
 
   async function handleEdit(editName, editPrice, editCategory, id) {
@@ -136,8 +139,9 @@ const MainMenu = () => {
         <Tab label="NASI" value="nasi" />
         <Tab label="SATE" value="sate" />
         <Tab label="OTHER DISHES" value="other" />
-        <Tab label="DRINKS" value="drink" />
+        <Tab label="ICE & DRINKS" value="drink" />
         <Tab label="SNACKS" value="snack" />
+        <Tab label="SOFT DRINKS" value="softdrink" />
       </Tabs>
       {items &&
       <Box
@@ -170,7 +174,11 @@ const MainMenu = () => {
           ))}
         {value === "snack" &&
           snackItems.map((item) => (
-            <Item item={item} key={`${item.name}-${item.id}`} />
+            <Item item={item} key={`${item.name}-${item.id}`} handleEdit={handleEdit} />
+          ))}
+        {value === "softdrink" &&
+          softDrinkItems.map((item) => (
+            <Item item={item} key={`${item.name}-${item.id}`} handleEdit={handleEdit} />
           ))}
       </Box>
       }

@@ -54,7 +54,7 @@ function Navbar() {
             sx={{ "&:hover": { cursor: "pointer" }, fontWeight: 'bold' }}
             color={shades.primary[500]}
           >
-            RETUR
+            RETURN
           </Box>
         </Box>
         <Box

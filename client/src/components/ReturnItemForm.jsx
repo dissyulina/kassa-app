@@ -25,7 +25,7 @@ function ReturnItemForm({open, handleClose, handleSubmit}) {
 
   async function getItems() {
     const items = await fetch(
-      "http://localhost:1337/api/items",
+      "http://localhost:1337/api/items?pagination[page]=1&pagination[pageSize]=100",
       { method: "GET" }
     );
     const itemsJson = await items.json();

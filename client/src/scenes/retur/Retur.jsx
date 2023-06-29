@@ -23,6 +23,11 @@ function Retur() {
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState([]);
   const [reload, setReload] = useState(0);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 20,
+  });
+  const [rowCountState, setRowCountState] = useState(0);
 
   const columns = [
     { field: 'id', headerName: 'ID', flex: 1 },
@@ -35,11 +40,11 @@ function Retur() {
 
   useEffect(() => {
     getData();
-  },[reload])
+  },[reload, paginationModel])
 
   async function getData() {
     const retur = await fetch(
-      "http://localhost:1337/api/returs",
+      `http://localhost:1337/api/returs?sort[1]=createdAt:desc&pagination[pageSize]=${paginationModel.pageSize}&pagination[page]=${paginationModel.page + 1}`,
       { method: "GET" }
     );
     const returJson = await retur.json();
@@ -84,7 +89,7 @@ function Retur() {
   return (
     <Container sx={{ margin: "80px auto"}} >
       <Typography variant="h3" textAlign="center">
-        <b>Retur</b>
+        <b>Return</b>
       </Typography>
       <Button
         sx={{
@@ -97,7 +102,7 @@ function Retur() {
         }}
         onClick={() => setOpen(true)}  
       >
-        Add Retur
+        Add Returned Item
       </Button>
       <DataGrid
         rows={rows}
@@ -106,6 +111,11 @@ function Retur() {
         autoHeight
         pageSize={25}
         pagination
+        rowCount={rowCountState}
+        pageSizeOptions={[5, 10, 15, 20, 25]}
+        paginationModel={paginationModel}
+        paginationMode="server"
+        onPaginationModelChange={setPaginationModel}
         sx={{ border: 0, '& .MuiDataGrid-columnHeaders': {
           backgroundColor: shades.neutral[200]
         }}}

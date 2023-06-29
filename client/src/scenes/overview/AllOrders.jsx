@@ -18,17 +18,24 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   currency: 'EUR',
 });
 
+const formatDateTime = (params) => {
+  const date = (params?.value).substring(0, 10);
+  const time = new Date(params?.value).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: false});
+  
+  return `${date} ${time}`
+}
+
 const columns = [
   {
     field: 'time',
     headerName: 'Created At',
-    valueFormatter: params => new Date(params?.value).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: false}),
-    flex: 1,
+    valueFormatter: formatDateTime,
+    flex: 2,
   },
   {
     field: 'order',
     headerName: 'Orders',
-    flex: 3,
+    flex: 4,
   },
   {
     field: 'payment',
@@ -64,17 +71,24 @@ export default function OrderOverview() {
   const { AlertMessage, isVisible, getAlertMessage } = useSnackbar();
   const [data, setData] = useState(null);
   const [rows, setRows] = useState([]);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 20,
+  });
+  const [rowCountState, setRowCountState] = useState(0);
 
   useEffect(() => {
     getData();
-  },[])
+  },[paginationModel])
 
   async function getData() {
     const orders = await fetch(
-      "http://localhost:1337/api/orders",
+      `http://localhost:1337/api/orders?sort[1]=createdAt:desc&pagination[pageSize]=${paginationModel.pageSize}&pagination[page]=${paginationModel.page + 1}`,
       { method: "GET" }
     );
     const ordersJson = await orders.json();
+
+    setRowCountState(ordersJson.meta.pagination.total);
 
     let dataForTable = []
     ordersJson.data.map(x => {
@@ -128,7 +142,7 @@ export default function OrderOverview() {
 
   return (
   <Container sx={{ margin: "80px auto"}} >
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', height: '100%' }}>
       <Typography variant="h3" textAlign="center" mb="24px">
         <b>All Orders</b>
       </Typography>
@@ -139,16 +153,19 @@ export default function OrderOverview() {
         disableRowSelectionOnClick
         rowHeight={30}
         processRowUpdate={processRowUpdate}
-        initialState={{
-          sorting: {
-            sortModel: [{ field: 'time', sort: 'desc' }],
+        rowCount={rowCountState}
+        pageSizeOptions={[5, 10, 15, 20, 25]}
+        paginationModel={paginationModel}
+        paginationMode="server"
+        onPaginationModelChange={setPaginationModel}
+        sx={{ border: 0, 
+          '& .MuiDataGrid-columnHeaders': {
+            backgroundColor: shades.neutral[200],
           },
+          // '&.MuiDataGrid-root .MuiDataGrid-cell': {
+          //   padding: '5px 0',
+          // },
         }}
-        pageSize={25}
-        pagination
-        sx={{ border: 0, '& .MuiDataGrid-columnHeaders': {
-          backgroundColor: shades.neutral[200]
-        }}}
       />
     </Box>
     {isVisible === true ? <AlertMessage /> : ''}

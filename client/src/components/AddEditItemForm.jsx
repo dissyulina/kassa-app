@@ -68,11 +68,13 @@ function AddEditItemForm({open, handleClose, item, handleSubmit, isEdit}) {
             input={<OutlinedInput label="Category" margin="dense"/>}
             onChange={(event) => setEditCategory(event.target.value)}
           >
-            <MenuItem value={'drink'}>Drink</MenuItem>
+            
             <MenuItem value={'nasi'}>Nasi</MenuItem>
-            <MenuItem value={'snack'}>Snack</MenuItem>
             <MenuItem value={'sate'}>Sate</MenuItem>
-            <MenuItem value={'other'}>Other</MenuItem>
+            <MenuItem value={'other'}>Other Dishes</MenuItem>
+            <MenuItem value={'snack'}>Snacks</MenuItem>
+            <MenuItem value={'drink'}>Ice & Drinks</MenuItem>
+            <MenuItem value={'softdrink'}>Softdrinks</MenuItem>
           </Select>
         </FormControl>
       </DialogContent>

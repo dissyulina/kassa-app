@@ -45,7 +45,7 @@ function SalesOverview() {
 
   async function getItems() {
     const items = await fetch(
-      "http://localhost:1337/api/items",
+      "http://localhost:1337/api/items?pagination[page]=1&pagination[pageSize]=100",
       { method: "GET" }
     );
     const itemsJson = await items.json();
@@ -61,9 +61,9 @@ function SalesOverview() {
   }
 
   async function getOrders() {
-    // RETUR
+    // RETURNED ITEMS
     const returs = await fetch(
-      "http://localhost:1337/api/returs",
+      "http://localhost:1337/api/returs?pagination[page]=1&pagination[pageSize]=100",
       { method: "GET" }
     );
     const retursJson = await returs.json();
@@ -81,11 +81,11 @@ function SalesOverview() {
     setRetursData(retursData);
 
     const orders = await fetch(
-      "http://localhost:1337/api/orders",
+      "http://localhost:1337/api/orders?pagination[page]=1&pagination[pageSize]=1000",
       { method: "GET" }
     );
     const ordersJson = await orders.json();
-    
+
     let ordersData = []
     ordersJson.data.map(x => ordersData.push(x.attributes));
     setOrdersData(ordersData);
@@ -107,11 +107,11 @@ function SalesOverview() {
     const totalSales = quantityData.reduce((sum, obj) => {
       return sum + obj.amount;
     }, 0);
- 
+    
     const totalReturAmount = retursData.reduce((sum, obj) => {
       return sum + obj.amount;
     }, 0);
- 
+   
     setTotalSales(totalSales - totalReturAmount)
 
     // TOTAL ITEMS SOLD
@@ -192,13 +192,13 @@ function SalesOverview() {
   const orderPerItemColumn = [
     { field: 'name', headerName: 'Item Name', flex: 1 },
     { field: 'quantity', headerName: 'Quantity Sold', type: 'number', flex: 1 },
-    { field: 'amount', headerName: 'Total Amount', valueFormatter: ({ value }) => currencyFormatter.format(value), type: 'number', flex: 1 },
+    { field: 'amount', headerName: 'Total Amount', valueFormatter: ({ value }) => value.toFixed(2), type: 'number', flex: 1 },
   ];
 
   const orderPerPaymentColumn = [
     { field: 'id', headerName: 'Payment Type', flex: 1  },
     { field: 'count', headerName: 'Quantity', type: 'number', flex: 1 },
-    { field: 'amount', headerName: 'Total Amount', valueFormatter: ({ value }) => currencyFormatter.format(value), type: 'number', flex: 1 },
+    { field: 'amount', headerName: 'Total Amount', valueFormatter: ({ value }) => value.toFixed(2), type: 'number', flex: 1 },
   ];
 
   const currencyFormatter = new Intl.NumberFormat('en-US', {
